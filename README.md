@@ -1,7 +1,7 @@
 # PowerQueryDocx
 Open Microsoft Word Docx files in Power Query
 
-Copy and paste the code from the file DocxToText.pq into a new blank query in the power query editor. 
+Copy and paste the code from the file [DocxToText.pq](https://raw.githubusercontent.com/stu0292/PowerQueryDocx/main/DocxToText.pq) into a new blank query in the power query editor. 
 Then in another blank query, use the function something like this: 
 
 ```
