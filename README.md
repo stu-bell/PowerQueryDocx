@@ -13,4 +13,6 @@ in Source
 
 Microsoft Docs on custom Power Query functions: https://learn.microsoft.com/en-us/power-query/custom-function
 
+This version is very basic and only picks out text and new lines. If there are specific elements in your word doc you want to extract, you'll need to figure out the element names and attributes from the [Open XML docs](https://learn.microsoft.com/en-us/office/open-xml/structure-of-a-wordprocessingml-document) and modify the extract text function.
+
 Thanks to [Mark White](https://sql10.blogspot.com/2016/06/reading-zip-files-in-powerquery-m.html) for the zip extraction function
