@@ -1,25 +1,26 @@
+let 
 // Custom Power Query function to extract data from a word docx file
-// See comments in function DocxXmlExtractText
-let
-DocxToText = (Docx as binary) as text =>
+// DocxToList(File.Contents("path/to/file.docx"))
+// See comments in function DocxXmlExtractElements
+DocxToList = (Docx as binary) as list =>
     let Extract = ZipExtractAll(Docx),
         // Most of the text is included in the word/document.xml - but check out some of the other options here
         Xml = Xml.Document(Extract{[FileName="word/document.xml"]}[Content]),
-        Text = DocxXmlExtractText(Xml)
-    in Text,
+        Elements = DocxXmlExtractElements(Xml)
+    in Elements,
 
-DocxXmlExtractText = (DocxXml as table) as text => 
+DocxXmlExtractElements = (DocxXml as table) as list => 
     // Recursive function. Parameter is a table returned by Xml.Document // https://github.com/stu0292/PowerQueryDocx
-    Text.Combine(
-        Table.AddColumn(DocxXml, "Text", each
-            if Value.Type([Value]) = type text then [Value]
+    List.Combine(
+        Table.AddColumn(DocxXml, "Elements", each
+            if Value.Type([Value]) = type text then {[Value]} // text values must be inside a list
                 // TODO handle different types of node by adding else if statements here
                 // eg [Name] = "p" indicates a paragraph node, therefore insert new line before extracting the rest of the text 
                 // For full reference see: https://learn.microsoft.com/en-us/office/open-xml/structure-of-a-wordprocessingml-document
-            else if [Name] = "p" then "#(cr)#(lf)" & @DocxXmlExtractText([Value])
-                else if [Name] = "tab" then "#(tab)" & @DocxXmlExtractText([Value])
-                else @DocxXmlExtractText([Value])
-        )[Text]
+                else if [Name] = "p" then {"#(cr)#(lf)"} & @DocxXmlExtractElements([Value])
+                else if [Name] = "tab" then {"#(tab)"} & @DocxXmlExtractElements([Value])
+                else @DocxXmlExtractElements([Value])
+        )[Elements]
     ),
 
 ZipExtractAll = (ZIPFile as binary) as table =>
@@ -58,4 +59,4 @@ ZipExtractAll = (ZIPFile as binary) as table =>
     in
         Table.FromRecords(Entries)
         
-in DocxToText
+in DocxToList
